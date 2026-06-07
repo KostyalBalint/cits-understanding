@@ -1,0 +1,155 @@
+@import "tailwindcss";
+
+/* ===== Dark palette = default (Tailwind v4 emits these as CSS vars utilities reference) ===== */
+@theme {
+  --color-brand-50: #eef6ff;
+  --color-brand-100: #d9eaff;
+  --color-brand-200: #bcd9ff;
+  --color-brand-300: #8ec2ff;
+  --color-brand-400: #599fff;
+  --color-brand-500: #337bff;
+  --color-brand-600: #1d5cf5;
+  --color-brand-700: #1747e1;
+  --color-brand-800: #193cb6;
+  --color-brand-900: #1a378f;
+  --color-ink-950: #0a0f1c;
+  --color-ink-900: #0f1729;
+  --color-ink-800: #1b2540;
+  --color-ink-700: #2b375a;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+}
+
+/* Semantic content tokens — dark defaults. Overridden under html.light below. */
+:root {
+  --text-body: #c7d2e6;
+  --text-heading: #ffffff;
+  --text-h3: #eaf1ff;
+  --text-h4: #cdd9f2;
+  --text-strong: #ffffff;
+  --text-quote: #aab8d4;
+  --code-bg: #1b2540;
+  --code-border: #2b375a;
+  --code-text: #aecbff;
+  --selection-bg: var(--color-brand-700);
+  --selection-fg: #ffffff;
+  --scroll-thumb: #2b375a;
+}
+
+/* ===== Light theme: re-point the palette + semantic tokens ===== */
+html.light {
+  /* neutrals */
+  --color-ink-950: #eef2f8; /* page background */
+  --color-ink-900: #ffffff; /* panels, sidebar, cards */
+  --color-ink-800: #e6ebf3; /* subtle fills */
+  --color-ink-700: #cdd6e3; /* borders */
+  /* slate text scale: invert so existing usages read as dark-on-light */
+  --color-slate-100: #0f1729;
+  --color-slate-200: #1e293b;
+  --color-slate-300: #334155;
+  --color-slate-400: #4a5a72;
+  --color-slate-500: #64748b;
+  --color-slate-600: #8c98ab;
+  /* brand: darken the light-end shades used as text/links */
+  --color-brand-200: #1747e1;
+  --color-brand-300: #1d5cf5;
+  --color-brand-400: #1d5cf5;
+  /* accent families: darken the light-end shades (-100/-200/-300) used as text */
+  --color-amber-100: #92400e;  --color-amber-200: #b45309;  --color-amber-300: #b45309;
+  --color-emerald-100: #065f46;--color-emerald-200: #047857;--color-emerald-300: #047857;
+  --color-rose-100: #9f1239;   --color-rose-200: #be123c;   --color-rose-300: #be123c;
+  --color-violet-100: #5b21b6; --color-violet-200: #6d28d9; --color-violet-300: #6d28d9;
+  --color-cyan-100: #155e75;   --color-cyan-200: #0e7490;   --color-cyan-300: #0e7490;
+  --color-sky-100: #075985;    --color-sky-200: #0369a1;    --color-sky-300: #0369a1;
+
+  /* semantic content tokens */
+  --text-body: #334155;
+  --text-heading: #0d1526;
+  --text-h3: #15213a;
+  --text-h4: #334155;
+  --text-strong: #0d1526;
+  --text-quote: #51607a;
+  --code-bg: #eef2f8;
+  --code-border: #cdd6e3;
+  --code-text: #1747e1;
+  --selection-bg: #bcd9ff;
+  --selection-fg: #0d1526;
+  --scroll-thumb: #c2ccdb;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--color-ink-950);
+  color: var(--text-body);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Headings on neutral surfaces use text-white in markup; flip to dark in light mode.
+   On-color elements (a saturated bg on the SAME element) keep white. */
+html.light .text-white {
+  color: var(--text-strong);
+}
+html.light .text-white:is(
+  [class*="bg-brand-"], [class*="bg-amber-"], [class*="bg-emerald-"],
+  [class*="bg-rose-"], [class*="bg-violet-"], [class*="bg-cyan-"], [class*="bg-sky-"]
+) {
+  color: #ffffff;
+}
+
+/* Content typography — applied via .prose-cits wrapper */
+.prose-cits h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 2.5rem 0 1rem;
+  scroll-margin-top: 6rem;
+  color: var(--text-heading);
+}
+.prose-cits h3 {
+  font-size: 1.2rem;
+  font-weight: 650;
+  margin: 1.8rem 0 0.6rem;
+  scroll-margin-top: 6rem;
+  color: var(--text-h3);
+}
+.prose-cits h4 {
+  font-size: 1.02rem;
+  font-weight: 600;
+  margin: 1.2rem 0 0.4rem;
+  color: var(--text-h4);
+}
+.prose-cits p { margin: 0.85rem 0; line-height: 1.75; color: var(--text-body); }
+.prose-cits ul { margin: 0.8rem 0; padding-left: 1.3rem; list-style: disc; }
+.prose-cits ol { margin: 0.8rem 0; padding-left: 1.4rem; list-style: decimal; }
+.prose-cits li { margin: 0.35rem 0; line-height: 1.7; color: var(--text-body); }
+.prose-cits li::marker { color: var(--color-brand-400); }
+.prose-cits a { color: var(--color-brand-300); text-decoration: underline; text-underline-offset: 2px; }
+.prose-cits a:hover { color: var(--color-brand-200); }
+.prose-cits strong { color: var(--text-strong); font-weight: 650; }
+.prose-cits code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.35rem;
+  color: var(--code-text);
+}
+.prose-cits blockquote {
+  border-left: 3px solid var(--color-brand-600);
+  padding-left: 1rem;
+  margin: 1rem 0;
+  color: var(--text-quote);
+  font-style: italic;
+}
+
+::selection { background: var(--selection-bg); color: var(--selection-fg); }
+
+/* scrollbar */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 6px; }
+*::-webkit-scrollbar-track { background: transparent; }

@@ -1,0 +1,27 @@
+# dependencies / build
+node_modules/
+site/node_modules/
+site/dist/
+
+# local C-ITS standards archive — NOT redistributed in this repo.
+# (Freely downloadable from the originators; see site/ for the explainer built from it.)
+/00_overview/
+/01_architecture/
+/02_access_layer/
+/03_networking_transport/
+/04_facilities_messages/
+/05_applications_usecases/
+/06_security_pki/
+/07_management/
+/08_conformance_testing/
+/09_c-roads/
+/10_car2car/
+/11_eu_policy/
+/12_global_us_iso/
+/13_research_projects/
+/_index/
+/INDEX.md
+
+# os / editor
+.DS_Store
+*.log
