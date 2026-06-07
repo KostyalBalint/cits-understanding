@@ -10,9 +10,10 @@
       // Apply saved theme before first paint to avoid a flash. Default: dark.
       (function () {
         try {
-          if (localStorage.getItem('cits-theme') === 'light') {
-            document.documentElement.classList.add('light');
-          }
+          var q = new URLSearchParams(location.search).get('theme');
+          var t = q || localStorage.getItem('cits-theme');
+          if (t === 'light') document.documentElement.classList.add('light');
+          if (t === 'dark') document.documentElement.classList.remove('light');
         } catch (e) {}
       })();
     </script>
