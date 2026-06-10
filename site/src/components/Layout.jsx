@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import React, { useState, useEffect, useRef } from 'react'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { NAV, ALL_ITEMS } from '../nav.js'
 import Search from './Search.jsx'
 import ThemeToggle from './ThemeToggle.jsx'
+import { getScroll, saveScroll, getLastPath, setLastPath } from '../lib/readingPosition.js'
 
 function Sidebar({ onNavigate, onOpenSearch }) {
   const { pathname } = useLocation()
@@ -97,9 +98,66 @@ export default function Layout({ children }) {
   const [open, setOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const { pathname } = useLocation()
+  const navigate = useNavigate()
+  const didRedirect = useRef(false)
+  const restoring = useRef(false)
+
+  // On app load: if landing on root, jump to the last page the reader was on.
+  // Runs once; clicking the Home logo later still navigates to Home normally.
   useEffect(() => {
-    window.scrollTo(0, 0)
+    if (didRedirect.current) return
+    didRedirect.current = true
+    const last = getLastPath()
+    if (pathname === '/' && last && last !== '/') {
+      navigate(last, { replace: true })
+    }
+  }, [pathname, navigate])
+
+  // On route change: remember the page, then restore its saved scroll offset.
+  // Double rAF lets the static page content lay out before we scroll. Both rAF
+  // ids are cancelled on cleanup so a pending inner frame can't scroll the next
+  // page to this page's offset.
+  useEffect(() => {
+    setLastPath(pathname)
     setOpen(false)
+    const y = getScroll(pathname)
+    restoring.current = true
+    let raf1 = 0, raf2 = 0
+    raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => {
+        window.scrollTo(0, y)
+        // Let the programmatic scroll's event flush, then resume capturing.
+        raf1 = requestAnimationFrame(() => { restoring.current = false })
+      })
+    })
+    return () => {
+      cancelAnimationFrame(raf1)
+      cancelAnimationFrame(raf2)
+      restoring.current = false
+    }
+  }, [pathname])
+
+  // Capture the current page's scroll offset (rAF-throttled) so we can restore
+  // it. Skips writes while a programmatic restore is in flight.
+  useEffect(() => {
+    let ticking = false
+    function record() {
+      if (!restoring.current) saveScroll(pathname, window.scrollY)
+      ticking = false
+    }
+    function onScroll() {
+      if (!ticking) {
+        ticking = true
+        requestAnimationFrame(record)
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('beforeunload', record)
+    return () => {
+      if (!restoring.current) saveScroll(pathname, window.scrollY)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('beforeunload', record)
+    }
   }, [pathname])
 
   // Global search hotkey: ⌘K / Ctrl-K, or "/" when not typing in a field.
